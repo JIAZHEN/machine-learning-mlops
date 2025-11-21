@@ -1,0 +1,13 @@
+{
+  "packages": ["python@3.11.10", "ffmpeg", "opencv", "pkg-config", "cairo"],
+  "shell": {
+    "init_hook": [
+      ". $VENV_DIR/bin/activate",
+      "pip install -r requirements.txt"
+    ],
+    "scripts": {
+      "run_test": "python main.py",
+      "run_webapp": "python run.py"
+    }
+  }
+}

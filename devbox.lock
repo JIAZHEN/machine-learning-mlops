@@ -1,0 +1,82 @@
+{
+  "lockfile_version": "1",
+  "packages": {
+    "cairo": {
+      "resolved": "github:NixOS/nixpkgs/02f2cb8e0feb4596d20cc52fda73ccee960e3538?narHash=sha256-tH3wHnOJms%2BU4k%2FrK2Nn1RfBrhffX92jLP%2F2VndSn0w%3D#cairo",
+      "source": "nixpkg"
+    },
+    "ffmpeg": {
+      "resolved": "github:NixOS/nixpkgs/02f2cb8e0feb4596d20cc52fda73ccee960e3538?narHash=sha256-tH3wHnOJms%2BU4k%2FrK2Nn1RfBrhffX92jLP%2F2VndSn0w%3D#ffmpeg",
+      "source": "nixpkg"
+    },
+    "github:NixOS/nixpkgs/nixpkgs-unstable": {
+      "last_modified": "2025-10-24T23:52:36Z",
+      "resolved": "github:NixOS/nixpkgs/02f2cb8e0feb4596d20cc52fda73ccee960e3538?lastModified=1761349956&narHash=sha256-tH3wHnOJms%2BU4k%2FrK2Nn1RfBrhffX92jLP%2F2VndSn0w%3D"
+    },
+    "opencv": {
+      "resolved": "github:NixOS/nixpkgs/02f2cb8e0feb4596d20cc52fda73ccee960e3538?narHash=sha256-tH3wHnOJms%2BU4k%2FrK2Nn1RfBrhffX92jLP%2F2VndSn0w%3D#opencv",
+      "source": "nixpkg"
+    },
+    "pkg-config": {
+      "resolved": "github:NixOS/nixpkgs/02f2cb8e0feb4596d20cc52fda73ccee960e3538?narHash=sha256-tH3wHnOJms%2BU4k%2FrK2Nn1RfBrhffX92jLP%2F2VndSn0w%3D#pkg-config",
+      "source": "nixpkg"
+    },
+    "python@3.11.10": {
+      "last_modified": "2024-12-03T12:40:06Z",
+      "plugin_version": "0.0.4",
+      "resolved": "github:NixOS/nixpkgs/566e53c2ad750c84f6d31f9ccb9d00f823165550#python311",
+      "source": "devbox-search",
+      "version": "3.11.10",
+      "systems": {
+        "aarch64-darwin": {
+          "outputs": [
+            {
+              "name": "out",
+              "path": "/nix/store/vmlgjfqdflax5f2y5r0952fspjzd7npw-python3-3.11.10",
+              "default": true
+            }
+          ],
+          "store_path": "/nix/store/vmlgjfqdflax5f2y5r0952fspjzd7npw-python3-3.11.10"
+        },
+        "aarch64-linux": {
+          "outputs": [
+            {
+              "name": "out",
+              "path": "/nix/store/hkfpyjwr9kkq3jljxv62drqfi2vndjqb-python3-3.11.10",
+              "default": true
+            },
+            {
+              "name": "debug",
+              "path": "/nix/store/q6kq2z7l096v83i04s3klb8cpijkdc79-python3-3.11.10-debug"
+            }
+          ],
+          "store_path": "/nix/store/hkfpyjwr9kkq3jljxv62drqfi2vndjqb-python3-3.11.10"
+        },
+        "x86_64-darwin": {
+          "outputs": [
+            {
+              "name": "out",
+              "path": "/nix/store/6hh041131z6hvk88nirx4rjmi6879sjc-python3-3.11.10",
+              "default": true
+            }
+          ],
+          "store_path": "/nix/store/6hh041131z6hvk88nirx4rjmi6879sjc-python3-3.11.10"
+        },
+        "x86_64-linux": {
+          "outputs": [
+            {
+              "name": "out",
+              "path": "/nix/store/nmqxyr00in2arwrq5qd1qipsanz1yrn5-python3-3.11.10",
+              "default": true
+            },
+            {
+              "name": "debug",
+              "path": "/nix/store/jcnym3cicgb2h5dlypy5maaipjmmazw3-python3-3.11.10-debug"
+            }
+          ],
+          "store_path": "/nix/store/nmqxyr00in2arwrq5qd1qipsanz1yrn5-python3-3.11.10"
+        }
+      }
+    }
+  }
+}
