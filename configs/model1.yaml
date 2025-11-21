@@ -1,0 +1,34 @@
+# Configuration for churn prediction model
+
+# Experiment settings
+experiment_name: "telco_churn"
+run_name: "churn_model_v1"
+
+# Data settings
+data_dir: "data/processed"
+model_dir: "models"
+
+# Model parameters
+model_params:
+  model_type: "random_forest"
+  n_estimators: 100
+  max_depth: 10
+  min_samples_split: 2
+  random_state: 42
+
+# Training settings
+training:
+  test_size: 0.2
+  val_size: 0.2
+  random_state: 42
+
+# Feature engineering
+features:
+  create_tenure_bins: true
+  create_revenue_features: true
+
+# Preprocessing
+preprocessing:
+  scale_numeric: true
+  encode_categorical: "onehot"
+  handle_missing: "drop"
