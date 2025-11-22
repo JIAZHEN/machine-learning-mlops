@@ -159,4 +159,5 @@ logs/
 Thumbs.db
 
 # Custom
-.envrc
+data/raw/*
+.devbox/

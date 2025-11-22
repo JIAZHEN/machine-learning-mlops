@@ -109,6 +109,7 @@ direnv allow
 ```
 
 This will automatically:
+
 - Set up Python 3.11.10
 - Create a virtual environment
 - Install all dependencies from `requirements.txt`
@@ -155,6 +156,7 @@ make data
 ```
 
 This runs the complete data pipeline:
+
 1. Data ingestion
 2. Data cleaning
 3. Data validation
@@ -169,6 +171,7 @@ make train
 ```
 
 This will:
+
 - Load processed data
 - Train the model with parameters from `configs/model1.yaml`
 - Log metrics and artifacts to MLflow
