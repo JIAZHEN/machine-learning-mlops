@@ -1,4 +1,4 @@
-.PHONY: help setup data clean lint test train predict explore convert
+.PHONY: help setup data clean lint test train predict explore convert mlflow-ui
 
 help:
 	@echo "Available commands:"
@@ -8,6 +8,7 @@ help:
 	@echo "  make train     - Train the model"
 	@echo "  make predict   - Make predictions with trained model"
 	@echo "  make explore   - Run exploratory data analysis"
+	@echo "  make mlflow-ui - Start MLflow UI with SQLite backend"
 	@echo "  make clean     - Remove generated files"
 	@echo "  make lint      - Run code linters"
 	@echo "  make test      - Run tests"
@@ -34,6 +35,11 @@ predict:
 explore:
 	@echo "Running exploratory data analysis..."
 	python -m src.visualization.exploration
+
+mlflow-ui:
+	@echo "Starting MLflow UI with SQLite backend..."
+	@echo "Access at: http://localhost:5000"
+	mlflow ui --backend-store-uri sqlite:///mlflow.db
 
 clean:
 	find . -type f -name "*.py[co]" -delete

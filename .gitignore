@@ -156,8 +156,8 @@ logs/
 
 # OS
 .DS_Store
-Thumbs.db
 
 # Custom
 data/raw/*
 .devbox/
+*.db

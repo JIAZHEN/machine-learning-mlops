@@ -158,8 +158,7 @@ def train_model(config_path: str = "configs/model1.yaml"):
         signature = infer_signature(X_train_transformed, y_train_pred)
         
         mlflow.sklearn.log_model(
-            model.model,
-            "model",
+            sk_model=model.model,
             signature=signature,
             input_example=input_example,
             registered_model_name="telco_churn_model"
