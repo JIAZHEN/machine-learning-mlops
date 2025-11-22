@@ -1,0 +1,16 @@
+# PersistentVolumeClaim for model storage
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: model-storage-pvc
+  namespace: ml-production
+  labels:
+    app: churn-prediction
+spec:
+  accessModes:
+  - ReadOnlyMany  # Multiple pods can read
+  resources:
+    requests:
+      storage: 5Gi
+  storageClassName: standard  # Change based on cloud provider
+

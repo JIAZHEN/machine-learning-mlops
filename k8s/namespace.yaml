@@ -1,0 +1,9 @@
+# Namespace for ML production workloads
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: ml-production
+  labels:
+    name: ml-production
+    environment: production
+

@@ -12,8 +12,9 @@ mlflow>=2.8.0
 
 # API and Web Framework
 fastapi>=0.104.0
-uvicorn>=0.24.0
+uvicorn[standard]>=0.24.0
 pydantic>=2.4.0
+python-multipart>=0.0.6
 
 # Data Visualization
 matplotlib>=3.7.0
@@ -45,8 +46,14 @@ python-dotenv>=1.0.0
 click>=8.1.0
 tqdm>=4.66.0
 
+# Data drift monitoring
+evidently>=0.4.0
+
 # Docker support
 # docker>=6.1.0
+
+# HTTP requests for health checks
+requests>=2.31.0
 
 # Cloud providers (uncomment as needed)
 # boto3>=1.28.0  # AWS

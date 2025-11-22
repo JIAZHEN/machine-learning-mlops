@@ -6,7 +6,9 @@ End-to-end **customer churn prediction** project built as a learning playground 
 - Reproducible data prep & training pipeline,
 - Experiment tracking with **MLflow**,
 - Online prediction via **FastAPI**,
-- Containerised with **Docker**.
+- **Data drift monitoring** with Evidently AI,
+- Containerised with **Docker**,
+- Production-ready **Kubernetes** deployment.
 
 We use devbox here. Run `direnv allow` to enable it.
 
@@ -26,7 +28,9 @@ This repo implements a simple but realistic MLOps flow around that problem:
 2. Model training with experiment tracking
 3. Model packaging as reusable artifacts
 4. Online serving via REST API
-5. (Optional) CI/tests & productionisation ideas
+5. Data drift monitoring
+6. Docker containerization
+7. Kubernetes deployment to cloud
 
 ---
 
@@ -51,17 +55,32 @@ machine-learning-mlops/
 │
 ├── models/                    # Trained model artifacts (gitignored)
 │
+├── k8s/                       # Kubernetes manifests
+│   ├── namespace.yaml
+│   ├── deployment.yaml
+│   ├── service.yaml
+│   ├── hpa.yaml
+│   └── ingress.yaml
+│
 ├── notebooks/                 # Jupyter notebooks for exploration
 │
 ├── reports/                   # Generated analysis reports
-│   └── figures/              # Generated visualizations
+│   ├── figures/              # Generated visualizations
+│   └── drift/                # Data drift reports
 │
 ├── references/                # Data dictionaries and documentation
 │
 ├── docs/                      # Project documentation
+│   ├── MLFLOW_UI_GUIDE.md
+│   ├── CLOUD_DEPLOYMENT.md
+│   └── MODEL_CONFIG_EXPLAINED.md
 │
 └── src/                       # Source code
     ├── __init__.py
+    ├── api/                   # FastAPI service
+    │   ├── __init__.py
+    │   └── app.py             # REST API endpoints
+    │
     ├── data/                  # Data engineering scripts
     │   ├── ingestion.py      # Load raw data
     │   ├── cleaning.py       # Handle missing values
@@ -78,6 +97,10 @@ machine-learning-mlops/
     │       ├── train.py
     │       ├── predict.py
     │       └── hyperparameters_tuning.py
+    │
+    ├── monitoring/            # Production monitoring
+    │   ├── __init__.py
+    │   └── drift_monitor.py  # Data drift detection
     │
     └── visualization/         # Visualization scripts
         ├── exploration.py    # EDA visualizations
@@ -213,24 +236,159 @@ Edit `configs/model1.yaml` to customize:
 View experiment results:
 
 ```bash
-mlflow ui
+make mlflow-ui
 ```
 
 Then open http://localhost:5000 in your browser.
 
+See the [MLflow UI Guide](docs/MLFLOW_UI_GUIDE.md) for detailed instructions.
+
 ---
 
-## 8. Next Steps
+## 8. FastAPI Service
 
-- [ ] Add FastAPI service for online predictions
-- [ ] Create Docker container
+Start the prediction API:
+
+```bash
+make api
+```
+
+The API will be available at:
+
+- **Base URL**: http://localhost:8000
+- **API Documentation**: http://localhost:8000/docs
+- **Health Check**: http://localhost:8000/health
+
+### Test the API
+
+```bash
+# Health check
+curl http://localhost:8000/health
+
+# Single prediction
+curl -X POST http://localhost:8000/predict/single \
+  -H "Content-Type: application/json" \
+  -d '{
+    "gender": "Female",
+    "SeniorCitizen": 0,
+    "Partner": "Yes",
+    "Dependents": "No",
+    "tenure": 12,
+    "PhoneService": "Yes",
+    "MultipleLines": "No",
+    "InternetService": "Fiber optic",
+    "OnlineSecurity": "No",
+    "OnlineBackup": "Yes",
+    "DeviceProtection": "No",
+    "TechSupport": "No",
+    "StreamingTV": "Yes",
+    "StreamingMovies": "No",
+    "Contract": "Month-to-month",
+    "PaperlessBilling": "Yes",
+    "PaymentMethod": "Electronic check",
+    "MonthlyCharges": 70.35,
+    "TotalCharges": 840.20
+  }'
+```
+
+---
+
+## 9. Data Drift Monitoring
+
+Monitor data quality and drift:
+
+```bash
+make drift-monitor
+```
+
+This generates:
+
+- HTML drift reports in `reports/drift/`
+- JSON metrics for alerting
+- Automated drift tests
+
+---
+
+## 10. Docker Deployment
+
+### Build Image
+
+```bash
+make docker-build
+```
+
+### Run Container
+
+```bash
+make docker-run
+```
+
+### Stop Container
+
+```bash
+make docker-stop
+```
+
+---
+
+## 11. Kubernetes Deployment
+
+Deploy to Kubernetes cluster:
+
+```bash
+make k8s-deploy
+```
+
+This creates:
+
+- Namespace: `ml-production`
+- Deployment with 3 replicas
+- Service (ClusterIP/LoadBalancer)
+- Horizontal Pod Autoscaler
+- ConfigMaps and Secrets
+- RBAC policies
+
+### Check Deployment
+
+```bash
+kubectl get pods -n ml-production
+kubectl get svc -n ml-production
+kubectl logs -f -n ml-production -l app=churn-prediction
+```
+
+### Delete Deployment
+
+```bash
+make k8s-delete
+```
+
+For detailed cloud deployment instructions (AWS EKS, GCP GKE, Azure AKS), see [Cloud Deployment Guide](docs/CLOUD_DEPLOYMENT.md).
+
+---
+
+## 12. Next Steps
+
+- [x] FastAPI service for online predictions
+- [x] Docker containerization
+- [x] Kubernetes deployment manifests
+- [x] Data drift monitoring
+- [x] Cloud deployment guide (AWS/GCP/Azure)
 - [ ] Add unit tests
-- [ ] Implement CI/CD pipeline
-- [ ] Add data drift monitoring
-- [ ] Deploy to cloud platform
+- [ ] Implement CI/CD pipeline (GitHub Actions)
+- [ ] Add model A/B testing
+- [ ] Set up monitoring alerts (Prometheus/Grafana)
+- [ ] Implement automated retraining pipeline
 
 ---
 
-## 9. Project Template
+## 13. Documentation
+
+- [MLflow UI Guide](docs/MLFLOW_UI_GUIDE.md) - How to use the MLflow interface
+- [Cloud Deployment Guide](docs/CLOUD_DEPLOYMENT.md) - Deploy to AWS/GCP/Azure
+- [Model Configuration](docs/MODEL_CONFIG_EXPLAINED.md) - Configuration details
+
+---
+
+## 14. Project Template
 
 This project structure is based on the [MLOps Template](https://github.com/Chim-SO/mlops-template) which provides a standardized structure for machine learning projects with MLOps best practices.

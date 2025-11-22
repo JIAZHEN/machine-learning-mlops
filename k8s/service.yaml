@@ -1,0 +1,22 @@
+# Kubernetes Service for churn prediction API
+apiVersion: v1
+kind: Service
+metadata:
+  name: churn-prediction-service
+  namespace: ml-production
+  labels:
+    app: churn-prediction
+  annotations:
+    service.beta.kubernetes.io/aws-load-balancer-type: "nlb"  # For AWS
+    cloud.google.com/neg: '{"ingress": true}'  # For GCP
+spec:
+  type: ClusterIP  # Change to LoadBalancer for direct external access
+  selector:
+    app: churn-prediction
+  ports:
+  - name: http
+    port: 80
+    targetPort: 8000
+    protocol: TCP
+  sessionAffinity: None
+

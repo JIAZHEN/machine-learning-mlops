@@ -1,0 +1,35 @@
+# Kubernetes Ingress for external access
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: churn-prediction-ingress
+  namespace: ml-production
+  labels:
+    app: churn-prediction
+  annotations:
+    kubernetes.io/ingress.class: "nginx"
+    cert-manager.io/cluster-issuer: "letsencrypt-prod"
+    nginx.ingress.kubernetes.io/ssl-redirect: "true"
+    nginx.ingress.kubernetes.io/rate-limit: "100"
+    # CORS settings
+    nginx.ingress.kubernetes.io/enable-cors: "true"
+    nginx.ingress.kubernetes.io/cors-allow-methods: "GET, POST, OPTIONS"
+    nginx.ingress.kubernetes.io/cors-allow-origin: "*"
+spec:
+  tls:
+  - hosts:
+    - churn-api.yourdomain.com
+    secretName: churn-prediction-tls
+  
+  rules:
+  - host: churn-api.yourdomain.com
+    http:
+      paths:
+      - path: /
+        pathType: Prefix
+        backend:
+          service:
+            name: churn-prediction-service
+            port:
+              number: 80
+

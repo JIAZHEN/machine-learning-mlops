@@ -1,0 +1,16 @@
+# Kubernetes ConfigMap for application configuration
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: churn-prediction-config
+  namespace: ml-production
+  labels:
+    app: churn-prediction
+    component: config
+data:
+  API_HOST: "0.0.0.0"
+  API_PORT: "8000"
+  LOG_LEVEL: "info"
+  MODEL_VERSION: "1.0.0"
+  # Add other configuration as needed
+
