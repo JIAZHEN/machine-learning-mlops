@@ -1,8 +1,9 @@
-.PHONY: help setup data clean lint test train predict explore
+.PHONY: help setup data clean lint test train predict explore convert
 
 help:
 	@echo "Available commands:"
 	@echo "  make setup     - Set up the development environment"
+	@echo "  make convert   - Convert Excel data to CSV (one-time setup)"
 	@echo "  make data      - Process raw data into features"
 	@echo "  make train     - Train the model"
 	@echo "  make predict   - Make predictions with trained model"
@@ -13,6 +14,10 @@ help:
 
 setup:
 	pip install -r requirements.txt
+
+convert:
+	@echo "Converting Excel to CSV..."
+	python scripts/convert_xlsx_to_csv.py
 
 data:
 	@echo "Processing data pipeline..."
