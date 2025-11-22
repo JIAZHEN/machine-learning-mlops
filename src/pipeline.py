@@ -12,6 +12,7 @@ from data.cleaning import handle_missing_values, handle_data_types
 from data.validation import validate_data_schema, validate_target_variable
 from data.labeling import encode_target
 from data.build_features import create_tenure_bins, create_revenue_features
+from data.encoding import encode_categorical_features
 from data.splitting import split_data, save_splits
 
 
@@ -57,15 +58,20 @@ def run_data_pipeline(raw_data_path: str = "data/raw/telco_churn.csv",
     print("✓ Target encoded")
     
     # Step 6: Feature engineering
-    print("\n[6/7] Engineering features...")
+    print("\n[6/8] Engineering features...")
     if 'tenure' in df.columns:
         df = create_tenure_bins(df)
     if 'MonthlyCharges' in df.columns and 'tenure' in df.columns:
         df = create_revenue_features(df)
     print("✓ Features engineered")
     
-    # Step 7: Split data
-    print("\n[7/7] Splitting data into train/val/test sets...")
+    # Step 7: Encode categorical features
+    print("\n[7/8] Encoding categorical features...")
+    df = encode_categorical_features(df, encoding_type='onehot')
+    print("✓ Categorical features encoded")
+    
+    # Step 8: Split data
+    print("\n[8/8] Splitting data into train/val/test sets...")
     X_train, X_val, X_test, y_train, y_val, y_test = split_data(
         df, target_col='Churn', test_size=0.2, val_size=0.2, random_state=42
     )
