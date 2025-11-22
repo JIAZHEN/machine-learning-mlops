@@ -37,7 +37,7 @@ def encode_categorical_features(df: pd.DataFrame,
     
     if encoding_type == 'onehot':
         # One-hot encoding (creates binary columns for each category)
-        df_encoded = pd.get_dummies(df_encoded, columns=categorical_cols, drop_first=False)
+        df_encoded = pd.get_dummies(df_encoded, columns=categorical_cols, drop_first=False, dtype=int)
         print(f"  ✓ One-hot encoding complete: {len(df_encoded.columns)} total columns")
         
     elif encoding_type == 'label':

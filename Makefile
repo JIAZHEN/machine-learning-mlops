@@ -25,11 +25,11 @@ data:
 
 train:
 	@echo "Training model..."
-	cd src/models/model1 && python train.py
+	python src/models/model1/train.py
 
 predict:
 	@echo "Making predictions..."
-	cd src/models/model1 && python predict.py
+	python src/models/model1/predict.py
 
 explore:
 	@echo "Running exploratory data analysis..."

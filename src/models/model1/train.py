@@ -2,13 +2,19 @@
 Training module for churn prediction model.
 """
 import yaml
+import os
+import sys
 from pathlib import Path
 from dataloader import ChurnDataLoader
 from preprocessing import ChurnPreprocessor
 from model import ChurnModel
-from sklearn.metrics import accuracy_score, precision_score, recall_score, f1_score, roc_auc_score
+from sklearn.metrics import (
+    accuracy_score, precision_score, recall_score, f1_score, roc_auc_score,
+    classification_report, confusion_matrix
+)
 import mlflow
 import mlflow.sklearn
+import numpy as np
 
 
 def train_model(config_path: str = "configs/model1.yaml"):
@@ -16,11 +22,24 @@ def train_model(config_path: str = "configs/model1.yaml"):
     Train churn prediction model.
     
     Args:
-        config_path: Path to configuration file
+        config_path: Path to configuration file (relative to project root)
     """
+    # Get project root (3 levels up from this file: model1 -> models -> src -> root)
+    project_root = Path(__file__).resolve().parent.parent.parent.parent
+    
+    # Resolve config path relative to project root
+    config_file = project_root / config_path
+    
+    if not config_file.exists():
+        raise FileNotFoundError(f"Config file not found: {config_file}\nProject root: {project_root}")
+    
     # Load configuration
-    with open(config_path, 'r') as f:
+    with open(config_file, 'r') as f:
         config = yaml.safe_load(f)
+    
+    # Update paths to be relative to project root
+    config['data_dir'] = str(project_root / config.get('data_dir', 'data/processed'))
+    config['model_dir'] = str(project_root / config.get('model_dir', 'models'))
     
     print("=" * 50)
     print("Starting model training...")
@@ -42,6 +61,11 @@ def train_model(config_path: str = "configs/model1.yaml"):
     preprocessor = ChurnPreprocessor()
     X_train_transformed = preprocessor.fit_transform(X_train)
     X_val_transformed = preprocessor.transform(X_val)
+    
+    # Set MLflow tracking to use SQLite backend (avoids filesystem deprecation warning)
+    project_root = Path(__file__).resolve().parent.parent.parent.parent
+    mlflow_db = project_root / "mlflow.db"
+    mlflow.set_tracking_uri(f"sqlite:///{mlflow_db}")
     
     # Start MLflow run
     mlflow.set_experiment(config.get('experiment_name', 'telco_churn'))
@@ -89,22 +113,34 @@ def train_model(config_path: str = "configs/model1.yaml"):
             'val_auc': val_auc
         })
         
-        # Print metrics
-        print("\n" + "=" * 50)
-        print("Training Results:")
-        print("=" * 50)
-        print(f"Train Accuracy:  {train_accuracy:.4f}")
-        print(f"Train Precision: {train_precision:.4f}")
-        print(f"Train Recall:    {train_recall:.4f}")
-        print(f"Train F1:        {train_f1:.4f}")
-        print(f"Train AUC:       {train_auc:.4f}")
-        print("\nValidation Results:")
-        print(f"Val Accuracy:    {val_accuracy:.4f}")
-        print(f"Val Precision:   {val_precision:.4f}")
-        print(f"Val Recall:      {val_recall:.4f}")
-        print(f"Val F1:          {val_f1:.4f}")
-        print(f"Val AUC:         {val_auc:.4f}")
-        print("=" * 50)
+        # Print metrics using sklearn's classification_report
+        print("\n" + "=" * 70)
+        print("TRAINING SET RESULTS:")
+        print("=" * 70)
+        print(f"\nAccuracy: {train_accuracy:.4f}")
+        print(f"AUC-ROC:  {train_auc:.4f}\n")
+        print("Classification Report:")
+        print(classification_report(y_train, y_train_pred, 
+                                    target_names=['No Churn', 'Churn'],
+                                    digits=4))
+        
+        print("\n" + "=" * 70)
+        print("VALIDATION SET RESULTS:")
+        print("=" * 70)
+        print(f"\nAccuracy: {val_accuracy:.4f}")
+        print(f"AUC-ROC:  {val_auc:.4f}\n")
+        print("Classification Report:")
+        print(classification_report(y_val, y_val_pred, 
+                                    target_names=['No Churn', 'Churn'],
+                                    digits=4))
+        
+        print("\nConfusion Matrix (Validation):")
+        cm = confusion_matrix(y_val, y_val_pred)
+        print(f"                Predicted")
+        print(f"                No    Yes")
+        print(f"Actual  No    {cm[0,0]:5d} {cm[0,1]:5d}")
+        print(f"        Yes   {cm[1,0]:5d} {cm[1,1]:5d}")
+        print("=" * 70)
         
         # Save model and preprocessor
         model_dir = Path(config.get('model_dir', 'models'))
@@ -113,8 +149,21 @@ def train_model(config_path: str = "configs/model1.yaml"):
         model.save(model_dir / "churn_model.pkl")
         preprocessor.save(model_dir / "preprocessor.pkl")
         
-        # Log model to MLflow
-        mlflow.sklearn.log_model(model.model, "model")
+        # Create input example for model signature
+        input_example = X_train_transformed[:5]  # First 5 rows as example
+        
+        # Log model to MLflow with signature
+        # Using signature inference to avoid artifact_path deprecation warning
+        from mlflow.models.signature import infer_signature
+        signature = infer_signature(X_train_transformed, y_train_pred)
+        
+        mlflow.sklearn.log_model(
+            model.model,
+            "model",
+            signature=signature,
+            input_example=input_example,
+            registered_model_name="telco_churn_model"
+        )
         
     print("\nTraining complete!")
 

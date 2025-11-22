@@ -16,11 +16,23 @@ class ChurnPredictor:
         Initialize predictor with trained model and preprocessor.
         
         Args:
-            model_path: Path to trained model
-            preprocessor_path: Path to fitted preprocessor
+            model_path: Path to trained model (relative to project root)
+            preprocessor_path: Path to fitted preprocessor (relative to project root)
         """
-        self.model = ChurnModel.load(model_path)
-        self.preprocessor = ChurnPreprocessor.load(preprocessor_path)
+        # Get project root (3 levels up from this file)
+        project_root = Path(__file__).resolve().parent.parent.parent.parent
+        
+        # Resolve paths relative to project root
+        model_file = project_root / model_path
+        preprocessor_file = project_root / preprocessor_path
+        
+        if not model_file.exists():
+            raise FileNotFoundError(f"Model not found: {model_file}\nPlease train the model first: make train")
+        if not preprocessor_file.exists():
+            raise FileNotFoundError(f"Preprocessor not found: {preprocessor_file}\nPlease train the model first: make train")
+        
+        self.model = ChurnModel.load(str(model_file))
+        self.preprocessor = ChurnPreprocessor.load(str(preprocessor_file))
     
     def predict(self, X: pd.DataFrame) -> pd.DataFrame:
         """
